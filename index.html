@@ -1,0 +1,1077 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>The Container</title> <!-- Supabase JavaScript library --> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> <style> * { box-sizing: border-box; }
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0d0d0d;
+  color: white;
+}
+
+body {
+  overflow: hidden;
+}
+
+/* ==============================
+   USERNAME SCREEN
+============================== */
+
+#usernameScreen {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #242424 0%,
+      #111 55%,
+      #070707 100%
+    );
+
+  z-index: 100;
+}
+
+.setup {
+  width: 100%;
+  max-width: 430px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 65px;
+  margin-bottom: 10px;
+}
+
+.setup h1 {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: -2px;
+}
+
+.setup p {
+  color: #888;
+  font-size: 15px;
+  margin: 12px 0 30px;
+}
+
+#usernameInput {
+  width: 100%;
+  padding: 17px;
+
+  border: 1px solid #333;
+  border-radius: 14px;
+
+  background: #1b1b1b;
+  color: white;
+
+  font-size: 17px;
+  outline: none;
+}
+
+#usernameInput:focus {
+  border-color: #777;
+}
+
+#enterButton {
+  width: 100%;
+
+  margin-top: 12px;
+  padding: 16px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: white;
+  color: black;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+#enterButton:hover {
+  background: #ddd;
+}
+
+/* ==============================
+   MAIN APP
+============================== */
+
+#app {
+  display: none;
+
+  width: 100%;
+  height: 100vh;
+
+  flex-direction: column;
+}
+
+/* ==============================
+   HEADER
+============================== */
+
+header {
+  height: 70px;
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 22px;
+
+  background: #151515;
+
+  border-bottom: 1px solid #292929;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  font-size: 25px;
+}
+
+header h1 {
+  margin: 0;
+
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+
+#currentUser {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* ==============================
+   MESSAGES
+============================== */
+
+#messages {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 25px 18px;
+
+  scroll-behavior: smooth;
+}
+
+.message {
+  width: 100%;
+  max-width: 720px;
+
+  margin: 0 auto 13px;
+
+  padding: 16px;
+
+  background: #1b1b1b;
+
+  border: 1px solid #292929;
+  border-radius: 15px;
+
+  animation: messageIn 0.2s ease;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.messageTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 9px;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.time {
+  color: #666;
+  font-size: 12px;
+}
+
+.messageText {
+  color: #ddd;
+
+  font-size: 15px;
+  line-height: 1.5;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deleteButton {
+  margin-top: 12px;
+
+  padding: 7px 11px;
+
+  border: 1px solid #333;
+  border-radius: 9px;
+
+  background: #242424;
+  color: #999;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background: #333;
+  color: white;
+}
+
+/* ==============================
+   EMPTY STATE
+============================== */
+
+.empty {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #555;
+
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 55px;
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  color: #777;
+  font-size: 17px;
+}
+
+.emptyText {
+  margin-top: 5px;
+  color: #4f4f4f;
+  font-size: 14px;
+}
+
+/* ==============================
+   COMPOSER
+============================== */
+
+#composer {
+  width: 100%;
+
+  padding: 13px 18px;
+
+  background: #151515;
+
+  border-top: 1px solid #292929;
+}
+
+.composerInner {
+  width: 100%;
+  max-width: 720px;
+
+  display: flex;
+  gap: 9px;
+
+  margin: auto;
+}
+
+#messageInput {
+  flex: 1;
+  min-width: 0;
+
+  padding: 15px;
+
+  border: 1px solid #333;
+  border-radius: 13px;
+
+  background: #202020;
+  color: white;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+#messageInput:focus {
+  border-color: #666;
+}
+
+#postButton {
+  width: 82px;
+
+  border: none;
+  border-radius: 13px;
+
+  background: white;
+  color: black;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+#postButton:hover {
+  background: #ddd;
+}
+
+#postButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==============================
+   MOBILE
+============================== */
+
+@media (max-width: 600px) {
+
+  header {
+    height: 62px;
+    min-height: 62px;
+    padding: 0 15px;
+  }
+
+  header h1 {
+    font-size: 17px;
+  }
+
+  .headerIcon {
+    font-size: 21px;
+  }
+
+  #currentUser {
+    font-size: 13px;
+  }
+
+  #messages {
+    padding: 15px 10px;
+  }
+
+  .message {
+    padding: 14px;
+  }
+
+  #composer {
+    padding: 9px;
+  }
+
+  #messageInput {
+    padding: 14px;
+  }
+
+  #postButton {
+    width: 68px;
+  }
+
+  .setup h1 {
+    font-size: 35px;
+  }
+
+  .logo {
+    font-size: 52px;
+  }
+}
+
+</style> </head> <body> <!-- ============================== USERNAME SCREEN ============================== --> <section id="usernameScreen">
+<div class="setup">
+
+  <div class="logo">
+    📦
+  </div>
+
+  <h1>
+    THE CONTAINER
+  </h1>
+
+  <p>
+    One place for everyone.<br>
+    No email. No password.
+  </p>
+
+  <input
+    id="usernameInput"
+    type="text"
+    maxlength="30"
+    placeholder="#yourname"
+    autocomplete="off"
+  >
+
+  <button
+    id="enterButton"
+    onclick="enterContainer()"
+  >
+    Enter Container
+  </button>
+
+</div>
+
+</section> <!-- ============================== MAIN APPLICATION ============================== --> <section id="app">
+<header>
+
+  <div class="headerTitle">
+
+    <span class="headerIcon">
+      📦
+    </span>
+
+    <h1>
+      THE CONTAINER
+    </h1>
+
+  </div>
+
+  <div id="currentUser"></div>
+
+</header>
+
+<!-- Messages -->
+
+<main id="messages"></main>
+
+<!-- Composer -->
+
+<div id="composer">
+
+  <div class="composerInner">
+
+    <input
+      id="messageInput"
+      type="text"
+      maxlength="2000"
+      placeholder="Write something..."
+      autocomplete="off"
+    >
+
+    <button
+      id="postButton"
+      onclick="postMessage()"
+    >
+      Post
+    </button>
+
+  </div>
+
+</div>
+
+</section> <script>
+// =====================================================
+// SUPABASE
+// =====================================================
+
+const SUPABASE_URL =
+  "https://rpyzymjyaluahvyzxioi.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_p2Kq58JsDOmsaz_OZ6iCEw_q5IJJCEY";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+// =====================================================
+// USER
+// =====================================================
+
+let username = "";
+
+let browserId =
+  localStorage.getItem(
+    "containerBrowserId"
+  );
+
+if (!browserId) {
+
+  browserId =
+    crypto.randomUUID();
+
+  localStorage.setItem(
+    "containerBrowserId",
+    browserId
+  );
+}
+
+// =====================================================
+// RESTORE USERNAME
+// =====================================================
+
+const savedUsername =
+  localStorage.getItem(
+    "containerUsername"
+  );
+
+if (savedUsername) {
+
+  username =
+    savedUsername;
+
+  showApp();
+}
+
+// =====================================================
+// ENTER
+// =====================================================
+
+function enterContainer() {
+
+  let value =
+    document
+      .getElementById(
+        "usernameInput"
+      )
+      .value
+      .trim();
+
+  if (!value) {
+
+    alert(
+      "Please choose a username."
+    );
+
+    return;
+  }
+
+  // Automatically add #
+  if (!value.startsWith("#")) {
+
+    value =
+      "#" + value;
+  }
+
+  // Remove spaces
+  value =
+    value.replace(/\s+/g, "");
+
+  // Validate username
+  if (
+    !/^#[a-zA-Z0-9_]+$/.test(value)
+  ) {
+
+    alert(
+      "Username can only contain letters, numbers and underscores."
+    );
+
+    return;
+  }
+
+  username =
+    value;
+
+  localStorage.setItem(
+    "containerUsername",
+    username
+  );
+
+  showApp();
+}
+
+// =====================================================
+// SHOW APP
+// =====================================================
+
+function showApp() {
+
+  document
+    .getElementById(
+      "usernameScreen"
+    )
+    .style.display =
+    "none";
+
+  document
+    .getElementById("app")
+    .style.display =
+    "flex";
+
+  document
+    .getElementById(
+      "currentUser"
+    )
+    .textContent =
+    username;
+
+  loadMessages();
+
+  subscribeToMessages();
+
+  setTimeout(
+    function() {
+
+      document
+        .getElementById(
+          "messageInput"
+        )
+        .focus();
+
+    },
+    100
+  );
+}
+
+// =====================================================
+// LOAD MESSAGES
+// =====================================================
+
+async function loadMessages() {
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+  if (result.error) {
+
+    console.error(
+      "Load error:",
+      result.error
+    );
+
+    showError(
+      "Could not load messages."
+    );
+
+    return;
+  }
+
+  renderMessages(
+    result.data
+  );
+}
+
+// =====================================================
+// POST MESSAGE
+// =====================================================
+
+async function postMessage() {
+
+  const input =
+    document
+      .getElementById(
+        "messageInput"
+      );
+
+  const button =
+    document
+      .getElementById(
+        "postButton"
+      );
+
+  const text =
+    input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  button.disabled = true;
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .insert({
+
+        username:
+          username,
+
+        browser_id:
+          browserId,
+
+        text:
+          text
+
+      });
+
+  button.disabled = false;
+
+  if (result.error) {
+
+    console.error(
+      "Post error:",
+      result.error
+    );
+
+    alert(
+      "Could not post the message."
+    );
+
+    return;
+  }
+
+  input.value = "";
+
+  input.focus();
+}
+
+// =====================================================
+// REALTIME
+// =====================================================
+
+function subscribeToMessages() {
+
+  supabaseClient
+    .channel(
+      "container-messages"
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "messages"
+      },
+      function(payload) {
+
+        console.log(
+          "Realtime update:",
+          payload
+        );
+
+        loadMessages();
+
+      }
+    )
+
+    .subscribe(
+      function(status) {
+
+        console.log(
+          "Realtime:",
+          status
+        );
+
+      }
+    );
+}
+
+// =====================================================
+// DELETE
+// =====================================================
+
+async function deleteMessage(id) {
+
+  const confirmed =
+    confirm(
+      "Delete this message?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .delete()
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "browser_id",
+        browserId
+      );
+
+  if (result.error) {
+
+    console.error(
+      "Delete error:",
+      result.error
+    );
+
+    alert(
+      "Could not delete the message."
+    );
+
+    return;
+  }
+
+  loadMessages();
+}
+
+// =====================================================
+// RENDER
+// =====================================================
+
+function renderMessages(
+  messages
+) {
+
+  const container =
+    document.getElementById(
+      "messages"
+    );
+
+  container.innerHTML = "";
+
+  if (
+    !messages ||
+    messages.length === 0
+  ) {
+
+    container.innerHTML = `
+
+      <div class="empty">
+
+        <div>
+
+          <div class="emptyIcon">
+            📦
+          </div>
+
+          <div class="emptyTitle">
+            The container is empty.
+          </div>
+
+          <div class="emptyText">
+            Be the first to post something.
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  messages.forEach(
+    function(message) {
+
+      const element =
+        document.createElement(
+          "div"
+        );
+
+      element.className =
+        "message";
+
+      const date =
+        new Date(
+          message.created_at
+        );
+
+      const time =
+        date.toLocaleTimeString(
+          [],
+          {
+            hour:
+              "2-digit",
+
+            minute:
+              "2-digit"
+          }
+        );
+
+      element.innerHTML = `
+
+        <div class="messageTop">
+
+          <span class="username">
+            ${escapeHTML(
+              message.username
+            )}
+          </span>
+
+          <span class="time">
+            ${time}
+          </span>
+
+        </div>
+
+        <div class="messageText">
+          ${escapeHTML(
+            message.text
+          )}
+        </div>
+
+      `;
+
+      // Delete button for
+      // messages created by this browser
+
+      if (
+        message.browser_id ===
+        browserId
+      ) {
+
+        const deleteButton =
+          document.createElement(
+            "button"
+          );
+
+        deleteButton.className =
+          "deleteButton";
+
+        deleteButton.textContent =
+          "Delete";
+
+        deleteButton.onclick =
+          function() {
+
+            deleteMessage(
+              message.id
+            );
+
+          };
+
+        element.appendChild(
+          deleteButton
+        );
+      }
+
+      container.appendChild(
+        element
+      );
+
+    }
+  );
+
+  // Scroll to newest
+
+  container.scrollTop =
+    container.scrollHeight;
+}
+
+// =====================================================
+// HTML ESCAPING
+// =====================================================
+
+function escapeHTML(
+  text
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+}
+
+// =====================================================
+// ERROR
+// =====================================================
+
+function showError(
+  message
+) {
+
+  const container =
+    document.getElementById(
+      "messages"
+    );
+
+  container.innerHTML = `
+
+    <div class="empty">
+
+      <div>
+
+        <div style="
+          font-size: 45px;
+          margin-bottom: 15px;
+        ">
+          ⚠️
+        </div>
+
+        <div style="
+          color: #aaa;
+        ">
+          ${escapeHTML(message)}
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+// =====================================================
+// ENTER KEY
+// =====================================================
+
+document
+  .getElementById(
+    "messageInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+
+        event.preventDefault();
+
+        postMessage();
+      }
+
+    }
+  );
+
+document
+  .getElementById(
+    "usernameInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+
+        event.preventDefault();
+
+        enterContainer();
+      }
+
+    }
+  );
+
+</script> </body> </html>
